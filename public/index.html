@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Anonymous Chat</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- App Header -->
+      <div class="app-header">
+        <div>
+          <h1>ChatterX</h1>
+          <p class="subheading">Talk instantly with strangers</p>
+        </div>
+      </div>
+
+      <!-- Theme Toggle Switch -->
+      <div class="theme-toggle">
+        <input type="checkbox" id="themeSwitch" />
+        <label for="themeSwitch" class="toggle">
+          <span class="icon sun">☀️</span>
+          <span class="icon moon">🌙</span>
+          <span class="ball"></span>
+        </label>
+      </div>
+
+      <!-- Interest Input Section -->
+      <div class="interest-box">
+        <div class="interest-container">
+          <div id="interestTags"></div>
+          <input
+            type="text"
+            id="interestInput"
+            placeholder="Type interest and press Enter"
+          />
+        </div>
+
+        <button id="startBtn">Start Chat</button>
+      </div>
+
+      <!-- Connection Status -->
+      <div id="status">Not connected</div>
+
+      <!-- Chat Area -->
+      <div id="chatBox">
+        <div id="chatPlaceholder" class="chat-placeholder">
+          Start a chat to see messages here
+        </div>
+      </div>
+
+      <!-- Typing Indicator -->
+      <div id="typingIndicator" class="typing-indicator hidden">
+        <span>Typing</span>
+        <div class="typing-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+
+      <!-- Media Upload Section -->
+      <div id="filePreview" class="file-preview hidden"></div>
+
+      <div class="input-area">
+        <div class="input-box">
+          <button id="plusBtn" class="plus-btn">+</button>
+          <input type="text" id="messageInput" placeholder="Type message..." />
+          <button id="sendBtn">Send</button>
+          <button id="nextBtn">Next</button>
+        </div>
+
+        <div id="actionMenu" class="action-menu hidden">
+          <button id="photoOption" class="action-item disabled-action">
+            Upload Photo
+          </button>
+          <button id="videoOption" class="action-item disabled-action">
+            Upload Video
+          </button>
+          <button id="reportOption" class="action-item danger-action">
+            Report User
+          </button>
+        </div>
+      </div>
+
+      <input
+        type="file"
+        id="fileInput"
+        accept="image/*,video/mp4,video/webm,video/quicktime"
+        hidden
+      />
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
