@@ -9,12 +9,18 @@ const socket = io();
 const interestInput = document.getElementById("interestInput");
 const interestTags = document.getElementById("interestTags");
 const themeSwitch = document.getElementById("themeSwitch");
+const menuBackdrop = document.getElementById("menuBackdrop");
+const welcomeScreen = document.getElementById("welcomeScreen");
+const chatScreen = document.getElementById("chatScreen");
+
 
 const chatPlaceholder = document.getElementById("chatPlaceholder");
 const status = document.getElementById("status");
+const onlineUsersText = document.getElementById("onlineUsers");
 const chatBox = document.getElementById("chatBox");
 const messageInput = document.getElementById("messageInput");
 const typingIndicator = document.getElementById("typingIndicator");
+const backBtn = document.getElementById("backBtn");
 
 const fileInput = document.getElementById("fileInput");
 const filePreview = document.getElementById("filePreview");
@@ -38,7 +44,7 @@ let isConnected = false;
 let isSearching = false;
 let chatEnded = false;
 let strangerTypingTimeout;
-
+let reportConfirmMode = false;
 let mediaUnlocked = false;
 let chatStartTime = null;
 let mediaUnlockTimer = null;
@@ -46,9 +52,25 @@ let mediaUnlockTimer = null;
 /* =========================================================
    UI HELPERS
 ========================================================= */
+
 function togglePlaceholder() {
     const hasMessages = chatBox.querySelectorAll(".message, .system-message").length > 0;
     chatPlaceholder.style.display = hasMessages ? "none" : "block";
+}
+
+function showWelcomeScreen() {
+    welcomeScreen.classList.remove("hidden");
+    chatScreen.classList.add("hidden");
+}
+
+function showChatScreen() {
+    welcomeScreen.classList.add("hidden");
+    chatScreen.classList.remove("hidden");
+}
+
+function resetReportConfirmState() {
+    reportConfirmMode = false;
+    reportOption.innerText = "Report User";
 }
 
 function getCurrentTime() {
@@ -62,20 +84,25 @@ function getCurrentTime() {
 
 function openActionMenu() {
     actionMenu.classList.remove("hidden");
+    menuBackdrop.classList.remove("hidden");
     plusBtn.classList.add("active");
 
     requestAnimationFrame(() => {
         actionMenu.classList.add("show");
+        menuBackdrop.classList.add("show");
     });
 }
 
 function closeActionMenu() {
     actionMenu.classList.remove("show");
+    menuBackdrop.classList.remove("show");
     plusBtn.classList.remove("active");
+    resetReportConfirmState();
 
     setTimeout(() => {
         if (!actionMenu.classList.contains("show")) {
             actionMenu.classList.add("hidden");
+            menuBackdrop.classList.add("hidden");
         }
     }, 280);
 }
@@ -212,12 +239,20 @@ function addVideo(sender, url) {
 startBtn.onclick = () => {
     if (isSearching || isConnected) return;
 
+    confirmMode = false;
+    nextBtn.innerText = "Next";
+    resetReportConfirmState();
+
     isSearching = true;
     chatEnded = false;
     startBtn.disabled = true;
     updateNextButtonState();
 
     typingIndicator.classList.add("hidden");
+
+    // Switch from welcome screen to chat screen
+    showChatScreen();
+
     socket.emit("joinQueue", interests);
     status.innerText = "Searching for stranger...";
 };
@@ -261,6 +296,9 @@ nextBtn.onclick = () => {
     confirmMode = false;
     nextBtn.innerText = "Next";
 
+    // Reset report confirmation if it was active
+    resetReportConfirmState();
+
     typingIndicator.classList.add("hidden");
     resetFilePreview();
     chatBox.querySelectorAll(".message, .system-message").forEach((m) => m.remove());
@@ -288,6 +326,30 @@ plusBtn.onclick = () => {
     } else {
         openActionMenu();
     }
+};
+
+backBtn.onclick = () => {
+    // Agar already welcome pe hai to kuch mat karo
+    if (!chatScreen || chatScreen.classList.contains("hidden")) return;
+
+    // 🔥 Agar connected ya searching hai to properly leave
+    if (isConnected || isSearching) {
+        socket.emit("next"); // current chat/queue se nikal jao
+    }
+
+    // Reset everything
+    confirmMode = false;
+    nextBtn.innerText = "Next";
+    resetReportConfirmState();
+
+    resetChatSessionState();
+    resetFilePreview();
+
+    chatBox.querySelectorAll(".message, .system-message").forEach((m) => m.remove());
+    status.innerText = "Not connected";
+
+    // Switch back to welcome screen
+    showWelcomeScreen();
 };
 
 photoOption.onclick = () => {
@@ -321,10 +383,22 @@ videoOption.onclick = () => {
 reportOption.onclick = () => {
     if (!isConnected) return;
 
-    addSystemMessage("You reported this user.");
+    if (!reportConfirmMode) {
+        reportConfirmMode = true;
+        reportOption.innerText = "Sure?";
+        return;
+    }
+
+    resetReportConfirmState();
+
+    socket.emit("report-user");
     socket.emit("next");
 
+    addSystemMessage("You reported this user.");
+
     resetChatSessionState();
+    resetFilePreview();
+
     chatBox.querySelectorAll(".message").forEach((m) => m.remove());
     status.innerText = "Searching for new stranger...";
     togglePlaceholder();
@@ -336,30 +410,39 @@ reportOption.onclick = () => {
 socket.on("message", (msg) => {
     typingIndicator.classList.add("hidden");
 
-    if (typeof msg === "string") {
-        if (msg.includes("left") || msg.includes("disconnected")) {
-            isConnected = false;
-            isSearching = false;
-            chatEnded = true;
-            mediaUnlocked = false;
-            clearTimeout(mediaUnlockTimer);
-            updateMediaAccessUI();
-            resetFilePreview();
-            closeActionMenu();
-            startBtn.disabled = false;
-            status.innerText = "Stranger disconnected. Click Next to find a new chat.";
-            updateNextButtonState();
-            addSystemMessage(msg);
-            return;
-        }
-
-        addMessage("stranger", msg);
-        return;
-    }
+   if (typeof msg === "string") {
+    addMessage("stranger", msg);
+    return;
+}
 
     if (msg.type === "image") addImage("stranger", msg.url);
     else if (msg.type === "video") addVideo("stranger", msg.url);
     else if (msg.type === "text") addMessage("stranger", msg.text);
+});
+
+socket.on("system-message", (text) => {
+    addSystemMessage(text);
+});
+
+socket.on("chat-ended", ({ reason }) => {
+    isConnected = false;
+    isSearching = false;
+    chatEnded = true;
+    mediaUnlocked = false;
+
+    clearTimeout(mediaUnlockTimer);
+    updateMediaAccessUI();
+    resetFilePreview();
+    closeActionMenu();
+    typingIndicator.classList.add("hidden");
+    startBtn.disabled = false;
+
+    status.innerText =
+        reason === "left"
+            ? "Stranger left. Click Next to find a new chat."
+            : "Stranger disconnected. Click Next to find a new chat.";
+
+    updateNextButtonState();
 });
 
 socket.on("chat start", (msg) => {
@@ -398,6 +481,10 @@ socket.on("typing", () => {
     strangerTypingTimeout = setTimeout(() => {
         typingIndicator.classList.add("hidden");
     }, 1200);
+});
+
+socket.on("onlineCount", (count) => {
+    onlineUsersText.innerText = `Users online: ${count}`;
 });
 
 /* =========================================================
@@ -453,10 +540,29 @@ fileInput.addEventListener("change", async () => {
     filePreview.classList.remove("hidden");
 
     if (file.type.startsWith("image/")) {
-        filePreview.innerHTML = `<img src="${URL.createObjectURL(file)}">`;
-    } else {
-        filePreview.innerHTML = `<video src="${URL.createObjectURL(file)}" controls></video>`;
-    }
+    filePreview.innerHTML = `
+        <div class="preview-header">
+            <span>Selected image</span>
+            <button type="button" id="removePreviewBtn" class="remove-preview-btn">×</button>
+        </div>
+        <img src="${URL.createObjectURL(file)}">
+    `;
+} else {
+    filePreview.innerHTML = `
+        <div class="preview-header">
+            <span>Selected video</span>
+            <button type="button" id="removePreviewBtn" class="remove-preview-btn">×</button>
+        </div>
+        <video src="${URL.createObjectURL(file)}" controls></video>
+    `;
+}
+
+const removePreviewBtn = document.getElementById("removePreviewBtn");
+if (removePreviewBtn) {
+    removePreviewBtn.onclick = () => {
+        resetFilePreview();
+    };
+}
 
     await uploadSelectedFile();
 });
@@ -542,3 +648,4 @@ updateMediaAccessUI();
 togglePlaceholder();
 closeActionMenu();
 updateNextButtonState();
+showWelcomeScreen();

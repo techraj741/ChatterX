@@ -20,6 +20,10 @@ app.use("/uploads", express.static("uploads"));
 let waitingUsers = [];
 let onlineUsers = 0;
 
+if (!fs.existsSync("reports")) {
+    fs.mkdirSync("reports");
+}
+
 /* =========================================================
    FILE UPLOAD SETUP
 ========================================================= */
@@ -61,47 +65,72 @@ const upload = multer({
 /* =========================================================
    MATCHING LOGIC
 ========================================================= */
+
+function formatInterestList(interests) {
+    if (!Array.isArray(interests) || interests.length === 0) return "";
+
+    if (interests.length === 1) {
+        return interests[0];
+    }
+
+    if (interests.length === 2) {
+        return `${interests[0]} and ${interests[1]}`;
+    }
+
+    return `${interests.slice(0, -1).join(", ")} and ${interests[interests.length - 1]}`;
+}
+
 function findMatch(user) {
     const userInterests = Array.isArray(user.interests) ? user.interests : [];
 
-    // 1) Try matching by common interests first
+    // Case 1: User has interests
     if (userInterests.length > 0) {
+        let bestMatchIndex = -1;
+        let maxCommon = 0;
+
         for (let i = 0; i < waitingUsers.length; i++) {
             const other = waitingUsers[i];
             const otherInterests = Array.isArray(other.interests) ? other.interests : [];
 
-            const common = userInterests.filter(x => otherInterests.includes(x));
+            if (otherInterests.length === 0) continue;
 
-            if (common.length > 0) {
-                waitingUsers.splice(i, 1);
-                user.commonInterest = common[0];
-                other.commonInterest = common[0];
-                return other;
+            const common = userInterests.filter((interest) =>
+                otherInterests.includes(interest)
+            );
+
+            if (common.length > maxCommon) {
+                maxCommon = common.length;
+                bestMatchIndex = i;
             }
         }
-    }
 
-    // 2) If no interests, prefer another no-interest user
-    if (userInterests.length === 0) {
-        for (let i = 0; i < waitingUsers.length; i++) {
-            const other = waitingUsers[i];
-            const otherInterests = Array.isArray(other.interests) ? other.interests : [];
+        if (bestMatchIndex !== -1) {
+            const matchedUser = waitingUsers.splice(bestMatchIndex, 1)[0];
 
-            if (otherInterests.length === 0) {
-                waitingUsers.splice(i, 1);
-                user.commonInterest = null;
-                other.commonInterest = null;
-                return other;
-            }
+            const common = userInterests.filter((i) =>
+    matchedUser.interests.includes(i)
+);
+
+const formattedCommonInterests = formatInterestList(common);
+
+user.commonInterest = formattedCommonInterests;
+matchedUser.commonInterest = formattedCommonInterests;
+
+            return matchedUser;
         }
+
+        return null;
     }
 
-    // 3) Fallback to anyone
-    if (waitingUsers.length > 0) {
-        const other = waitingUsers.shift();
-        user.commonInterest = null;
-        other.commonInterest = null;
-        return other;
+    // Case 2: No interest users
+    for (let i = 0; i < waitingUsers.length; i++) {
+        const other = waitingUsers[i];
+        const otherInterests = Array.isArray(other.interests) ? other.interests : [];
+
+        if (otherInterests.length === 0) {
+            waitingUsers.splice(i, 1);
+            return other;
+        }
     }
 
     return null;
@@ -123,20 +152,44 @@ function connectUsers(userA, userB) {
     io.to(room).emit("chat start", interestText);
 }
 
-function leaveCurrentRoom(socket, leaveMessage) {
+function leaveCurrentRoom(socket, leaveMessage, reason = "disconnected") {
     if (!socket.room) return;
 
     const currentRoom = socket.room;
     const roomData = io.sockets.adapter.rooms.get(currentRoom);
 
-    // Only send leave message if partner is actually still in room
-    if (roomData && roomData.size > 1 && leaveMessage) {
-        socket.to(currentRoom).emit("message", leaveMessage);
+    if (roomData && roomData.size >= 1) {
+        if (leaveMessage) {
+            socket.to(currentRoom).emit("system-message", leaveMessage);
+        }
+
+        socket.to(currentRoom).emit("chat-ended", {
+            reason
+        });
     }
 
     socket.leave(currentRoom);
     socket.room = null;
     socket.commonInterest = null;
+}
+
+function saveReport(data) {
+    const reportPath = path.join("reports", "reports.json");
+
+    let reports = [];
+
+    if (fs.existsSync(reportPath)) {
+        try {
+            const fileData = fs.readFileSync(reportPath, "utf-8");
+            reports = fileData ? JSON.parse(fileData) : [];
+        } catch (error) {
+            reports = [];
+        }
+    }
+
+    reports.push(data);
+
+    fs.writeFileSync(reportPath, JSON.stringify(reports, null, 2));
 }
 
 /* =========================================================
@@ -175,11 +228,22 @@ io.on("connection", (socket) => {
         socket.to(socket.room).emit("typing");
     });
 
+    socket.on("report-user", () => {
+    const reportData = {
+        reportedBy: socket.id,
+        room: socket.room || null,
+        interests: Array.isArray(socket.interests) ? socket.interests : [],
+        timestamp: new Date().toISOString()
+    };
+
+    saveReport(reportData);
+});
+
     socket.on("next", () => {
         // remove from waiting queue first
         waitingUsers = waitingUsers.filter(user => user.id !== socket.id);
 
-        leaveCurrentRoom(socket, "Stranger left the chat.");
+        leaveCurrentRoom(socket, "Stranger left the chat.", "left");
 
         const match = findMatch(socket);
 
@@ -191,16 +255,19 @@ io.on("connection", (socket) => {
         }
     });
 
-    socket.on("disconnect", () => {
-        console.log("User disconnected:", socket.id);
+    socket.on("disconnecting", () => {
+    console.log("User disconnecting:", socket.id);
+    leaveCurrentRoom(socket, "Stranger disconnected.", "disconnected");
+});
 
-        onlineUsers--;
-        io.emit("onlineCount", onlineUsers);
+socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
 
-        waitingUsers = waitingUsers.filter(user => user.id !== socket.id);
+    onlineUsers--;
+    io.emit("onlineCount", onlineUsers);
 
-        leaveCurrentRoom(socket, "Stranger disconnected.");
-    });
+    waitingUsers = waitingUsers.filter(user => user.id !== socket.id);
+});
 });
 
 /* =========================================================
@@ -228,6 +295,8 @@ app.post("/upload", (req, res) => {
 /* =========================================================
    START SERVER
 ========================================================= */
-server.listen(3000, () => {
-    console.log("Server running on http://localhost:3000");
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });

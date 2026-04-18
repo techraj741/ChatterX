@@ -78,7 +78,6 @@ h1{
 
 .interest-box input,
 .input-box input,
-.media-bar input[type="file"],
 #interestInput,
 #messageInput{
     width:100%;
@@ -143,8 +142,7 @@ button:disabled{
 }
 
 #sendBtn,
-#nextBtn,
-#sendFileBtn{
+#nextBtn{
     min-width:88px;
 }
 
@@ -155,6 +153,62 @@ button:disabled{
 
 #nextBtn:hover{
     box-shadow:0 12px 22px rgba(51,65,85,0.35);
+}
+
+/* =========================================================
+   CHAT HEADER / BACK / TOGGLE
+========================================================= */
+
+.chat-header{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    margin-bottom:8px;
+}
+
+.floating-controls{
+    position:relative;
+    height:78px;
+    margin-top:4px;
+    margin-bottom:10px;
+}
+
+.floating-controls .back-btn{
+    position:absolute;
+    left:0;
+    top:28px;
+}
+
+.chat-theme-toggle{
+    position:absolute;
+    right:0;
+    top:28px;
+    margin-bottom:0;
+}
+
+.chat-theme-toggle input{
+    display:none;
+}
+
+.back-btn{
+    width:40px;
+    height:40px;
+    border-radius:12px;
+    border:none;
+    cursor:pointer;
+    font-size:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(255,255,255,0.06);
+    color:#e2e8f0;
+    transition:all 0.2s ease;
+}
+
+.back-btn:hover{
+    transform:translateY(-1px);
+    background:rgba(255,255,255,0.12);
 }
 
 /* =========================================================
@@ -218,6 +272,14 @@ button:disabled{
     color:#cbd5e1;
 }
 
+.online-users{
+    margin:-4px 0 12px;
+    text-align:center;
+    font-size:12px;
+    color:#94a3b8;
+    opacity:0.95;
+}
+
 /* =========================================================
    CHAT BOX
 ========================================================= */
@@ -269,6 +331,12 @@ button:disabled{
     line-height:1.45;
     word-wrap:break-word;
     box-shadow:0 8px 18px rgba(0,0,0,0.14);
+    transition:transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.message:hover{
+    transform:translateY(-1px);
+    box-shadow:0 12px 24px rgba(0,0,0,0.18);
 }
 
 .message-you{
@@ -313,14 +381,6 @@ button:disabled{
 
 .label-stranger{
     color:#93c5fd;
-}
-
-.you{
-    color:#22c55e;
-}
-
-.stranger{
-    color:#60a5fa;
 }
 
 .message-time{
@@ -383,20 +443,9 @@ button:disabled{
     }
 }
 
-.hidden{
-    display:none !important;
-}
-
 /* =========================================================
-   MEDIA SECTION
+   MEDIA
 ========================================================= */
-
-.media-bar{
-    display:flex;
-    gap:10px;
-    margin-bottom:10px;
-    align-items:center;
-}
 
 .file-preview{
     margin-bottom:10px;
@@ -423,6 +472,28 @@ button:disabled{
     border-radius:14px;
     background:#000;
     box-shadow:0 8px 18px rgba(0,0,0,0.25);
+}
+
+.preview-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:10px;
+    font-size:12px;
+    color:#cbd5e1;
+}
+
+.remove-preview-btn{
+    min-width:30px;
+    width:30px;
+    height:30px;
+    padding:0;
+    border-radius:10px;
+    font-size:18px;
+    line-height:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
 /* =========================================================
@@ -560,73 +631,7 @@ button:disabled{
 }
 
 /* =========================================================
-   LIGHT MODE
-========================================================= */
-
-body.light{
-    background:linear-gradient(135deg, #eef2ff, #f8fafc, #e2e8f0);
-    color:#0f172a;
-}
-
-body.light .container{
-    background:rgba(255,255,255,0.82);
-    border:1px solid rgba(15,23,42,0.08);
-    box-shadow:
-        0 20px 45px rgba(15,23,42,0.12),
-        inset 0 1px 0 rgba(255,255,255,0.9);
-}
-
-body.light .subheading{
-    color:#64748b;
-}
-
-body.light .chat-placeholder{
-    color:#64748b;
-}
-
-body.light #chatBox{
-    background:rgba(226,232,240,0.75);
-    border:1px solid rgba(15,23,42,0.06);
-}
-
-body.light .message-stranger{
-    background:rgba(15,23,42,0.08);
-    color:#0f172a;
-}
-
-body.light .system-message{
-    color:#64748b;
-}
-
-body.light #status{
-    color:#475569;
-}
-
-body.light .typing-indicator{
-    color:#64748b;
-}
-
-body.light .typing-dots span{
-    background:#64748b;
-}
-
-body.light .interest-container{
-    background:rgba(255,255,255,0.7);
-    border:1px solid rgba(15,23,42,0.08);
-}
-
-body.light .interest-box input,
-body.light .input-box input,
-body.light .media-bar input[type="file"],
-body.light #interestInput,
-body.light #messageInput{
-    background:rgba(255,255,255,0.85);
-    color:#0f172a;
-    border:1px solid rgba(15,23,42,0.08);
-}
-
-/* =========================================================
-   INPUT AREA + FLOATING ACTION MENU
+   INPUT AREA + ACTION MENU
 ========================================================= */
 
 .input-area{
@@ -635,10 +640,11 @@ body.light #messageInput{
 
 .input-box{
     display:flex;
-    gap:10px;
+    gap:12px;
     align-items:center;
     position:relative;
     z-index:2;
+    padding-top:10px;
 }
 
 .plus-btn{
@@ -692,18 +698,6 @@ body.light #messageInput{
     pointer-events:auto;
 }
 
-.input-area.active::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    backdrop-filter:blur(4px);
-}
-
-@keyframes fadeIn{
-    from{opacity:0; transform:translateY(6px);}
-    to{opacity:1; transform:translateY(0);}
-}
-
 .action-item{
     width:100%;
     text-align:left;
@@ -727,10 +721,224 @@ body.light #messageInput{
     box-shadow:0 12px 22px rgba(239,68,68,0.30);
 }
 
-body.light .action-menu{
-    background:rgba(255,255,255,0.58);
-    border:1px solid rgba(15,23,42,0.08);
+.menu-backdrop{
+    position:absolute;
+    inset:-8px;
+    border-radius:20px;
+    background:rgba(0,0,0,0.12);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    opacity:0;
+    transition:opacity 0.22s ease;
+    z-index:1;
+    pointer-events:none;
+}
+
+.menu-backdrop.show{
+    opacity:1;
+}
+
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(6px);}
+    to{opacity:1; transform:translateY(0);}
+}
+
+/* =========================================================
+   SCREEN SYSTEM
+========================================================= */
+
+.screen{
+    width:100%;
+}
+
+.active-screen{
+    display:block;
+}
+
+.hidden{
+    display:none !important;
+}
+
+/* =========================================================
+   WELCOME SCREEN
+========================================================= */
+
+.welcome-header{
+    margin-bottom:20px;
+    justify-content:center;
+}
+
+.welcome-card{
+    padding:22px;
+    border-radius:20px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.08);
+    box-shadow:0 10px 30px rgba(0,0,0,0.18);
+}
+
+.welcome-title{
+    margin:0 0 10px;
+    font-size:22px;
+    font-weight:700;
+    text-align:center;
+}
+
+.welcome-text{
+    margin:0 0 18px;
+    text-align:center;
+    font-size:13px;
+    color:#94a3b8;
+    line-height:1.5;
+}
+
+/* =========================================================
+   LIGHT MODE
+========================================================= */
+
+body.light{
+    background:
+        radial-gradient(circle at 20% 20%, rgba(255, 230, 160, 0.4), transparent 40%),
+        radial-gradient(circle at 80% 10%, rgba(255, 240, 190, 0.4), transparent 35%),
+        linear-gradient(135deg, #fffaf0, #f9f1dc, #f3e7c7);
+    color:#3b2f1f;
+}
+
+body.light .container{
+    background:rgba(255, 253, 247, 0.88);
+    border:1px solid rgba(201, 167, 92, 0.18);
     box-shadow:
-        0 18px 40px rgba(15,23,42,0.12),
-        inset 0 1px 0 rgba(255,255,255,0.75);
+        0 30px 70px rgba(173, 141, 73, 0.22),
+        inset 0 1px 0 rgba(255,255,255,0.95);
+}
+
+body.light h1{
+    color:#3f2f1d;
+}
+
+body.light .subheading{
+    color:#7f6b4b;
+}
+
+body.light .back-btn{
+    background:rgba(255,250,240,0.92);
+    color:#8a6a2f;
+    border:1px solid rgba(201, 167, 92, 0.14);
+    box-shadow:0 6px 16px rgba(173, 141, 73, 0.12);
+}
+
+body.light #status{
+    color:#6e5735;
+    font-weight:600;
+}
+
+body.light .online-users{
+    color:#9a825a;
+}
+
+body.light .chat-placeholder{
+    color:#a18b67;
+}
+
+body.light #chatBox{
+    background:linear-gradient(180deg, #fffaf0, #f8eed8);
+    border:1px solid rgba(201, 167, 92, 0.18);
+    box-shadow:
+        inset 0 2px 6px rgba(255,255,255,0.8),
+        inset 0 -2px 6px rgba(201, 167, 92, 0.08),
+        0 6px 18px rgba(173, 141, 73, 0.08);
+}
+
+body.light #chatBox:hover{
+    box-shadow:
+        inset 0 2px 6px rgba(255,255,255,0.9),
+        inset 0 -2px 8px rgba(201, 167, 92, 0.12),
+        0 8px 25px rgba(173, 141, 73, 0.08);
+}
+
+body.light .message-stranger{
+    background:rgba(255, 244, 214, 0.9);
+    color:#3b2f1f;
+}
+
+body.light .message-you{
+    background:linear-gradient(135deg, #f6c453, #f0b429);
+    color:#2f2415;
+}
+
+body.light .label-you{
+    color:#5a3e00;
+}
+
+body.light .label-stranger{
+    color:#8a6a1f;
+}
+
+body.light .system-message{
+    color:#9a7c42;
+}
+
+body.light .typing-indicator{
+    color:#8b7355;
+}
+
+body.light .typing-dots span{
+    background:#b0893c;
+}
+
+body.light .interest-container{
+    background:rgba(255, 250, 235, 0.85);
+    border:1px solid rgba(214, 180, 90, 0.14);
+}
+
+body.light .interest-box input,
+body.light .input-box input,
+body.light #interestInput,
+body.light #messageInput{
+    background:rgba(255,255,255,0.92);
+    color:#3b2f1f;
+    border:1px solid rgba(214, 180, 90, 0.18);
+}
+
+body.light button{
+    box-shadow:0 8px 18px rgba(201, 155, 37, 0.18);
+}
+
+body.light .plus-btn,
+body.light #sendBtn{
+    background:linear-gradient(135deg, #d6b36a, #c79a3d);
+    box-shadow:
+        0 10px 22px rgba(179, 134, 42, 0.25),
+        inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+body.light #nextBtn{
+    background:linear-gradient(135deg, #bfa06a, #a98a56);
+    box-shadow:0 8px 18px rgba(140, 112, 58, 0.22);
+    opacity:0.85;
+}
+
+body.light .file-preview{
+    background:rgba(255, 252, 244, 0.78);
+    border:1px solid rgba(214, 180, 90, 0.16);
+}
+
+body.light .preview-header{
+    color:#7a6240;
+}
+
+body.light .action-menu{
+    background:rgba(255, 252, 244, 0.78);
+    border:1px solid rgba(214, 180, 90, 0.16);
+    box-shadow:
+        0 18px 40px rgba(179, 140, 40, 0.12),
+        inset 0 1px 0 rgba(255,255,255,0.85);
+}
+
+body.light .welcome-card{
+    background:rgba(255,255,255,0.65);
+    border:1px solid rgba(15,23,42,0.08);
+}
+
+body.light .welcome-text{
+    color:#7f6b4b;
 }
