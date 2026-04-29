@@ -941,4 +941,172 @@ body.light .welcome-card{
 
 body.light .welcome-text{
     color:#7f6b4b;
+} 
+
+/* =========================================================
+   FULL WINDOW CHAT LAYOUT UPDATE
+========================================================= */
+
+body {
+  padding: 0 !important;
+  min-height: 100vh;
+  height: 100vh;
+  display: block !important;
+  overflow: hidden;
+}
+
+.container {
+  width: 100vw !important;
+  max-width: none !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  padding: 18px 22px !important;
+  border-radius: 0 !important;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.screen {
+  height: 100%;
+}
+
+#chatScreen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+#chatScreen.hidden {
+  display: none !important;
+}
+
+.chat-header {
+  margin-bottom: 6px;
+}
+
+.floating-controls {
+  height: 56px !important;
+  margin-bottom: 6px !important;
+}
+
+#status {
+  margin: 8px 0 6px !important;
+}
+
+.online-users {
+  margin: 0 0 8px !important;
+}
+
+#chatBox {
+  flex: 1 !important;
+  height: auto !important;
+  min-height: 0;
+  margin-bottom: 10px !important;
+}
+
+.input-area {
+  flex-shrink: 0;
+}
+
+.input-box {
+  padding-top: 8px !important;
+}
+
+.message {
+  max-width: 60%;
+}
+
+.chat-media {
+  max-width: 320px;
+  max-height: 360px;
+}
+
+/* Welcome screen center */
+#welcomeScreen {
+  height: 100%;
+}
+
+#welcomeScreen.active-screen,
+#welcomeScreen:not(.hidden) {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* Mobile full screen */
+@media (max-width: 600px) {
+  body {
+    height: 100dvh;
+    min-height: 100dvh;
+  }
+
+  .container {
+    height: 100dvh !important;
+    padding: 12px !important;
+  }
+
+  h1 {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  .subheading {
+    font-size: 11px;
+  }
+
+  .floating-controls {
+    height: 48px !important;
+  }
+
+  .back-btn {
+    width: 38px;
+    height: 38px;
+  }
+
+  .toggle {
+    width: 58px;
+    height: 30px;
+  }
+
+  #chatBox {
+    padding: 12px !important;
+    border-radius: 16px;
+  }
+
+  .message {
+    max-width: 82%;
+    font-size: 13px;
+  }
+
+  .input-box {
+    gap: 8px !important;
+  }
+
+  .plus-btn {
+    min-width: 42px;
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+  }
+
+  #messageInput {
+    min-width: 0;
+    flex: 1;
+    padding: 11px 12px;
+  }
+
+  #sendBtn,
+  #nextBtn {
+    min-width: 58px !important;
+    padding: 11px 10px;
+    font-size: 12px;
+  }
+
+  .chat-media {
+    max-width: 220px;
+    max-height: 260px;
+  }
 }
