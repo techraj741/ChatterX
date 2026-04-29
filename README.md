@@ -4,6 +4,12 @@ ChatterX is a real-time anonymous chat application where users can connect with 
 
 ---
 
+## 🌐 Live Demo
+
+👉 https://chatterx-9sb6.onrender.com/
+
+---
+
 ## 📌 Features
 
 * 🔗 **Anonymous One-to-One Chat**
