@@ -99,12 +99,17 @@ http://localhost:3000
 
 ## 📸 Screenshots
 
-> (Add your screenshots here)
+### 🏠 Home Screen
+![Home Screen](screenshots/home.png)
 
-* Home screen
-* Chat interface
-* Matching screen
-* Dark mode
+### ⏳ Waiting / Matching Screen
+![Waiting Screen](screenshots/waiting.png)
+
+### 🌙 Chat Screen - Dark Mode
+![Chat Dark Mode](screenshots/chat-dark.png)
+
+### ☀️ Chat Screen - Light Mode
+![Chat Light Mode](screenshots/chat-light.png)
 
 ---
 
