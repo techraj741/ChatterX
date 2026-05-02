@@ -14,6 +14,7 @@ const welcomeScreen = document.getElementById("welcomeScreen");
 const chatScreen = document.getElementById("chatScreen");
 
 
+
 const chatPlaceholder = document.getElementById("chatPlaceholder");
 const status = document.getElementById("status");
 const onlineUsersText = document.getElementById("onlineUsers");
@@ -649,3 +650,12 @@ togglePlaceholder();
 closeActionMenu();
 updateNextButtonState();
 showWelcomeScreen();
+
+const menuToggle = document.getElementById("menuToggle");
+const navRight = document.querySelector(".nav-right");
+
+if(menuToggle && navRight){
+    menuToggle.onclick = () => {
+        navRight.classList.toggle("show");
+    };
+}
