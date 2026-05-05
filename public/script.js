@@ -17,6 +17,7 @@ const chatScreen = document.getElementById("chatScreen");
 
 const chatPlaceholder = document.getElementById("chatPlaceholder");
 const status = document.getElementById("status");
+const statusDot = document.getElementById("statusDot");
 const onlineUsersText = document.getElementById("onlineUsers");
 const chatBox = document.getElementById("chatBox");
 const messageInput = document.getElementById("messageInput");
@@ -57,6 +58,18 @@ let mediaUnlockTimer = null;
 function togglePlaceholder() {
     const hasMessages = chatBox.querySelectorAll(".message, .system-message").length > 0;
     chatPlaceholder.style.display = hasMessages ? "none" : "block";
+}
+
+function scrollChatToBottom() {
+    chatBox.scrollTo({
+        top: chatBox.scrollHeight,
+        behavior: "smooth"
+    });
+}
+
+function setStatusState(state) {
+    statusDot.classList.remove("disconnected", "searching", "connected");
+    statusDot.classList.add(state);
 }
 
 function showWelcomeScreen() {
@@ -144,7 +157,7 @@ function startMediaUnlockTimer() {
     mediaUnlockTimer = setTimeout(() => {
         mediaUnlocked = true;
         updateMediaAccessUI();
-    }, 5 * 60 * 1000);
+    }, 10 * 1000);
 }
 
 function resetFilePreview() {
@@ -183,7 +196,7 @@ function addMessage(sender, text) {
     div.style.animation = "fadeIn 0.25s ease";
 
     chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    scrollChatToBottom();
     togglePlaceholder();
 }
 
@@ -194,7 +207,7 @@ function addSystemMessage(text) {
     div.style.animation = "fadeIn 0.25s ease";
 
     chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    scrollChatToBottom();
     togglePlaceholder();
 }
 
@@ -211,7 +224,7 @@ function addImage(sender, url) {
     div.style.animation = "fadeIn 0.25s ease";
 
     chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    scrollChatToBottom();
     togglePlaceholder();
 }
 
@@ -230,7 +243,7 @@ function addVideo(sender, url) {
     div.style.animation = "fadeIn 0.25s ease";
 
     chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    scrollChatToBottom();
     togglePlaceholder();
 }
 
@@ -256,6 +269,7 @@ startBtn.onclick = () => {
 
     socket.emit("joinQueue", interests);
     status.innerText = "Searching for stranger...";
+    setStatusState("searching");
 };
 
 sendBtn.onclick = () => {
@@ -348,7 +362,7 @@ backBtn.onclick = () => {
 
     chatBox.querySelectorAll(".message, .system-message").forEach((m) => m.remove());
     status.innerText = "Not connected";
-
+    setStatusState("disconnected"); 
     // Switch back to welcome screen
     showWelcomeScreen();
 };
@@ -443,11 +457,14 @@ socket.on("chat-ended", ({ reason }) => {
             ? "Stranger left. Click Next to find a new chat."
             : "Stranger disconnected. Click Next to find a new chat.";
 
+    setStatusState("disconnected");
     updateNextButtonState();
 });
 
+
 socket.on("chat start", (msg) => {
     status.innerText = msg;
+    setStatusState("connected");
     isConnected = true;
     isSearching = false;
     chatEnded = false;
@@ -460,6 +477,7 @@ socket.on("chat start", (msg) => {
 
 socket.on("waiting", (msg) => {
     status.innerText = msg;
+    setStatusState("searching");
     isConnected = false;
     isSearching = true;
     chatEnded = false;
@@ -469,8 +487,18 @@ socket.on("waiting", (msg) => {
     updateNextButtonState();
 });
 
+let typingThrottle;
+
 messageInput.addEventListener("input", () => {
-    if (isConnected) socket.emit("typing");
+    if (!isConnected) return;
+
+    if (!typingThrottle) {
+        socket.emit("typing");
+
+        typingThrottle = setTimeout(() => {
+            typingThrottle = null;
+        }, 800);
+    }
 });
 
 socket.on("typing", () => {
@@ -479,9 +507,10 @@ socket.on("typing", () => {
     typingIndicator.classList.remove("hidden");
 
     clearTimeout(strangerTypingTimeout);
+
     strangerTypingTimeout = setTimeout(() => {
         typingIndicator.classList.add("hidden");
-    }, 1200);
+    }, 1500);
 });
 
 socket.on("onlineCount", (count) => {
@@ -650,6 +679,7 @@ togglePlaceholder();
 closeActionMenu();
 updateNextButtonState();
 showWelcomeScreen();
+setStatusState("disconnected");
 
 const menuToggle = document.getElementById("menuToggle");
 const navRight = document.querySelector(".nav-right");
