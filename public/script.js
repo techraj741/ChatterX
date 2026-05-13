@@ -157,7 +157,7 @@ function startMediaUnlockTimer() {
     mediaUnlockTimer = setTimeout(() => {
         mediaUnlocked = true;
         updateMediaAccessUI();
-    }, 10 * 1000);
+    }, 2 * 60 * 1000);
 }
 
 function resetFilePreview() {
@@ -187,11 +187,24 @@ function addMessage(sender, text) {
     div.classList.add("message");
     div.classList.add(sender === "you" ? "message-you" : "message-stranger");
 
-    div.innerHTML = `
-        <span class="label-${sender}">${sender === "you" ? "You" : "Stranger"}</span><br>
-        <div class="message-text">${text}</div>
-        <div class="message-time">${getCurrentTime()}</div>
-    `;
+    const label = document.createElement("span");
+    label.className = `label-${sender}`;
+    label.innerText = sender === "you" ? "You" : "Stranger";
+
+    const br = document.createElement("br");
+
+    const messageText = document.createElement("div");
+    messageText.className = "message-text";
+    messageText.innerText = text;
+
+    const messageTime = document.createElement("div");
+    messageTime.className = "message-time";
+    messageTime.innerText = getCurrentTime();
+
+    div.appendChild(label);
+    div.appendChild(br);
+    div.appendChild(messageText);
+    div.appendChild(messageTime);
 
     div.style.animation = "fadeIn 0.25s ease";
 
@@ -371,7 +384,7 @@ photoOption.onclick = () => {
     if (!isConnected) return;
 
     if (!mediaUnlocked) {
-        alert("Photo sharing unlocks after 5 minutes of active chat.");
+        alert("Media sharing unlocks after 2 minutes of active chat.");
         closeActionMenu();
         return;
     }
@@ -385,7 +398,7 @@ videoOption.onclick = () => {
     if (!isConnected) return;
 
     if (!mediaUnlocked) {
-        alert("Video sharing unlocks after 5 minutes of active chat.");
+        alert("Media sharing unlocks after 2 minutes of active chat.");
         closeActionMenu();
         return;
     }
