@@ -17,7 +17,13 @@ function closeNavMenu() {
   navBackdrop?.classList.remove("show");
 }
 
-menuToggle?.addEventListener("click", openNavMenu);
+menuToggle?.addEventListener("click", () => {
+  if (navMenu?.classList.contains("show")) {
+    closeNavMenu();
+  } else {
+    openNavMenu();
+  }
+});
 closeMenu?.addEventListener("click", closeNavMenu);
 navBackdrop?.addEventListener("click", closeNavMenu);
 
