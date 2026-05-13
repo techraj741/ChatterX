@@ -106,9 +106,34 @@ if (isChatPage) {
     chatScreen.classList.add("hidden");
   }
 
-  function showChatScreen() {
-    welcomeScreen.classList.add("hidden");
-    chatScreen.classList.remove("hidden");
+  function handleBackToWelcome() {
+  if (!chatScreen.classList.contains("hidden")) {
+    if (isConnected || isSearching) {
+      socket.emit("leave-chat");
+    }
+
+    confirmMode = false;
+    nextBtn.innerText = "Next";
+
+    resetReportConfirmState();
+    resetChatSessionState();
+    resetFilePreview();
+    clearChatBox();
+
+    status.innerText = "Not connected";
+    setStatusState("disconnected");
+
+    showWelcomeScreen();
+      }
+    }
+
+  function showChatScreen(pushState = true) {
+  welcomeScreen.classList.add("hidden");
+  chatScreen.classList.remove("hidden");
+
+  if (pushState) {
+    history.pushState({ screen: "chat" }, "", window.location.href);
+     }
   }
 
   function resetReportConfirmState() {
@@ -445,6 +470,10 @@ if (isChatPage) {
   nextBtn.onclick = () => {
     if (isSearching || (!isConnected && !chatEnded)) return;
 
+    if (chatEnded) {
+    confirmMode = true;
+    }
+
     if (!confirmMode) {
       confirmMode = true;
       nextBtn.innerText = "Sure?";
@@ -486,24 +515,7 @@ if (isChatPage) {
   };
 
   backBtn.onclick = () => {
-    if (chatScreen.classList.contains("hidden")) return;
-
-    if (isConnected || isSearching) {
-      socket.emit("leave-chat");
-    }
-
-    confirmMode = false;
-    nextBtn.innerText = "Next";
-
-    resetReportConfirmState();
-    resetChatSessionState();
-    resetFilePreview();
-    clearChatBox();
-
-    status.innerText = "Not connected";
-    setStatusState("disconnected");
-
-    showWelcomeScreen();
+  handleBackToWelcome();
   };
 
   photoOption.onclick = () => {
@@ -737,6 +749,10 @@ if (isChatPage) {
       document.body.classList.contains("light") ? "light" : "dark"
     );
   });
+
+  window.addEventListener("popstate", () => {
+  handleBackToWelcome();
+});
 
   /* =========================================================
      INITIAL SETUP

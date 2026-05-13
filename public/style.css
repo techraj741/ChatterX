@@ -100,8 +100,14 @@ body {
   color: #6366f1;
 }
 
+
+
 .menu-toggle,
 .menu-backdrop-nav {
+  display: none;
+}
+
+.menu-footer {
   display: none;
 }
 
@@ -1209,7 +1215,7 @@ body.about-body .nav-right a:hover {
     transform: translateX(100%);
     transition: transform 0.3s ease;
     z-index: 1001;
-    justify-content: space-between;
+    
   }
 
   .nav-right.show {
@@ -1263,8 +1269,9 @@ body.about-body .nav-right a:hover {
   }
 
   .menu-footer {
+  display: block;
   margin-top: auto;
-  padding-top: 20px;
+  padding: 18px 14px;
   text-align: center;
   color: #475569;
   font-size: 14px;
