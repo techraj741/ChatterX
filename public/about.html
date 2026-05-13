@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About ChatterX</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="light about-body">
+    <div class="about-page">
+      <nav class="navbar">
+        <div class="nav-left">
+          <div class="logo">💬</div>
+          <h2 class="brand">
+            <span class="chatter">Chatter</span><span class="x">X</span>
+          </h2>
+        </div>
+
+        <div class="nav-right" id="navMenu">
+  <button class="close-menu" id="closeMenu">×</button>
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="help.html">Help</a>
+</div>
+
+<div class="menu-backdrop-nav" id="navBackdrop"></div>
+
+<div class="menu-toggle" id="menuToggle">☰</div>
+
+</nav>
+
+<main class="about-content">
+
+  <section class="about-hero">
+    <h1>About ChatterX</h1>
+    <p>
+      ChatterX is a real-time anonymous chat platform built to connect users instantly with strangers through live one-to-one conversations.
+    </p>
+  </section>
+
+  <section class="about-card">
+    <h2>Project Objective</h2>
+    <p>
+      The main objective of ChatterX is to demonstrate real-time communication, anonymous user matching, interest-based pairing, and interactive chat features using modern web technologies.
+    </p>
+  </section>
+
+  <section class="about-card">
+    <h2>How It Works</h2>
+    <p>
+      When a user starts a chat, the system adds them to a waiting queue. If another user is available, both users are connected inside a private Socket.IO room. If users enter similar interests, the system gives priority to interest-based matching.
+    </p>
+  </section>
+
+  <section class="about-card">
+    <h2>Key Features</h2>
+    <ul>
+      <li>Anonymous one-to-one real-time chat</li>
+      <li>Interest-based stranger matching</li>
+      <li>Typing indicator</li>
+      <li>Next button to find a new stranger</li>
+      <li>Media sharing after a safety delay</li>
+      <li>Light and dark theme support</li>
+      <li>Report user option</li>
+      <li>Responsive design for desktop and mobile</li>
+    </ul>
+  </section>
+
+  <section class="about-card">
+    <h2>Technology Stack</h2>
+    <div class="tech-grid">
+      <span>HTML</span>
+      <span>CSS</span>
+      <span>JavaScript</span>
+      <span>Node.js</span>
+      <span>Express.js</span>
+      <span>Socket.IO</span>
+      <span>Multer</span>
+      <span>Render</span>
+      <span>GitHub</span>
+    </div>
+  </section>
+
+  <section class="about-card">
+    <h2>Future Scope</h2>
+    <ul>
+      <li>User authentication for optional verified profiles</li>
+      <li>Database storage for better moderation</li>
+      <li>Audio and video chat using WebRTC</li>
+      <li>Advanced report review system</li>
+      <li>Redis-based queue system for better scalability</li>
+    </ul>
+  </section>
+
+</main>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>

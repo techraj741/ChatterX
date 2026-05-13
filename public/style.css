@@ -95,24 +95,85 @@ body.light .nav-right a:hover{
 }
 
 /* mobile */
+.close-menu,
+.menu-backdrop-nav{
+    display:none;
+}
+
 @media(max-width:600px){
+    .menu-toggle{
+        display:block;
+        font-size:24px;
+        color:#0f172a;
+        z-index:1002;
+    }
+
     .nav-right{
-        display:none;
+        position:fixed;
+        top:0;
+        right:-280px;
+        width:260px;
+        height:100vh;
+        display:flex;
         flex-direction:column;
-        position:absolute;
-        top:60px;
-        right:10px;
-        background:#1e293b;
-        padding:10px;
-        border-radius:10px;
+        gap:18px;
+        padding:76px 22px 22px;
+        box-sizing:border-box;
+        background:#ffffff;
+        border-left:1px solid #e2e8f0;
+        box-shadow:-20px 0 40px rgba(15,23,42,0.18);
+        z-index:1001;
+        transition:right 0.3s ease;
     }
 
     .nav-right.show{
-        display:flex;
+        right:0;
     }
 
-    .menu-toggle{
+    .nav-right a{
+        font-size:16px;
+        color:#334155;
+        padding:12px 14px;
+        border-radius:12px;
+        background:#f8fafc;
+    }
+
+    .nav-right a:hover{
+        background:#eef2ff;
+        color:#4f46e5;
+    }
+
+    .close-menu{
         display:block;
+        position:absolute;
+        top:18px;
+        right:18px;
+        width:38px;
+        height:38px;
+        padding:0;
+        border-radius:50%;
+        font-size:24px;
+        background:#eef2ff;
+        color:#4f46e5;
+        box-shadow:none;
+    }
+
+    .menu-backdrop-nav{
+        display:block;
+        position:fixed;
+        inset:0;
+        background:rgba(15,23,42,0.35);
+        backdrop-filter:blur(4px);
+        -webkit-backdrop-filter:blur(4px);
+        opacity:0;
+        pointer-events:none;
+        z-index:1000;
+        transition:opacity 0.25s ease;
+    }
+
+    .menu-backdrop-nav.show{
+        opacity:1;
+        pointer-events:auto;
     }
 }
 
@@ -1210,4 +1271,161 @@ body.light .preview-header{
 .welcome-card{
     width:100%;
     box-sizing:border-box;
+}
+
+/* =========================================================
+   ABOUT PAGE
+========================================================= */
+
+.about-page{
+    min-height:100vh;
+    background:linear-gradient(135deg, #f8fafc, #eef2ff);
+    color:#0f172a;
+}
+
+.about-content{
+    max-width:1000px;
+    margin:0 auto;
+    padding:100px 20px 60px;
+}
+
+.about-hero{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+.about-hero h1{
+    font-size:42px;
+    margin-bottom:18px;
+    color:#111827;
+}
+
+.about-hero p{
+    max-width:760px;
+    margin:0 auto;
+    font-size:17px;
+    line-height:1.7;
+    color:#475569;
+}
+
+.about-card{
+    background:#ffffff;
+    border:1px solid #e2e8f0;
+    border-radius:24px;
+    padding:28px;
+    margin-bottom:24px;
+    box-shadow:0 10px 30px rgba(15,23,42,0.06);
+}
+
+.about-card h2{
+    margin-top:0;
+    margin-bottom:16px;
+    font-size:24px;
+    color:#111827;
+}
+
+.about-card p{
+    color:#475569;
+    line-height:1.7;
+    font-size:15px;
+}
+
+.about-card ul{
+    padding-left:20px;
+    color:#475569;
+    line-height:1.8;
+}
+
+.tech-grid{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-top:16px;
+}
+
+.tech-grid span{
+    padding:10px 16px;
+    background:#eef2ff;
+    color:#4338ca;
+    border-radius:999px;
+    font-size:14px;
+    font-weight:600;
+}
+
+
+.about-page .nav-right a{
+    color:#475569;
+}
+
+.about-page .nav-right a:hover{
+    color:#4f46e5;
+}
+
+@media(max-width:768px){
+
+    .about-content{
+        padding:28px 16px 50px;
+    }
+
+    .about-hero h1{
+        font-size:32px;
+    }
+
+    .about-hero p{
+        font-size:15px;
+    }
+
+    .about-card{
+        padding:22px;
+    }
+
+    .about-card h2{
+        font-size:21px;
+    }
+}
+
+body.about-body{
+    overflow-y:auto;
+    height:auto;
+    min-height:100vh;
+}
+
+/* FINAL ABOUT + HELP PAGE FIX */
+
+body.about-body{
+    margin:0;
+    padding:0;
+    min-height:100vh;
+    height:auto;
+    overflow-y:auto;
+    background:#f8fafc;
+}
+
+body.about-body .about-page{
+    min-height:100vh;
+    height:auto;
+    overflow:visible;
+    background:linear-gradient(135deg, #f8fafc, #eef2ff);
+}
+
+body.about-body .navbar{
+    position:relative;
+    width:100%;
+    height:64px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:#ffffff;
+    border-bottom:1px solid #e2e8f0;
+    z-index:10;
+}
+
+body.about-body .about-content{
+    max-width:1000px;
+    margin:0 auto;
+    padding:40px 20px 70px;
+}
+
+body.about-body .about-hero{
+    margin-top:10px;
 }

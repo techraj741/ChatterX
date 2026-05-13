@@ -715,10 +715,28 @@ showWelcomeScreen();
 setStatusState("disconnected");
 
 const menuToggle = document.getElementById("menuToggle");
-const navRight = document.querySelector(".nav-right");
+const closeMenu = document.getElementById("closeMenu");
+const navMenu = document.getElementById("navMenu");
+const navBackdrop = document.getElementById("navBackdrop");
 
-if(menuToggle && navRight){
-    menuToggle.onclick = () => {
-        navRight.classList.toggle("show");
-    };
+function openNavMenu() {
+    navMenu.classList.add("show");
+    navBackdrop.classList.add("show");
+}
+
+function closeNavMenu() {
+    navMenu.classList.remove("show");
+    navBackdrop.classList.remove("show");
+}
+
+if (menuToggle && navMenu && navBackdrop) {
+    menuToggle.onclick = openNavMenu;
+}
+
+if (closeMenu) {
+    closeMenu.onclick = closeNavMenu;
+}
+
+if (navBackdrop) {
+    navBackdrop.onclick = closeNavMenu;
 }
