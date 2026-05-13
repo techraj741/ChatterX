@@ -1,144 +1,141 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Anonymous Chat</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="container">
-      <!-- ✅ NAVBAR HERE -->
-      <div class="navbar">
-        <div class="nav-left">
-          <div class="logo">💬</div>
-          <h2 class="brand">
-            <span class="chatter">Chatter</span><span class="x">X</span>
-          </h2>
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChatterX - Anonymous Chat</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
 
-        <div class="nav-right" id="navMenu">
-  <button class="close-menu" id="closeMenu">×</button>
-  <a href="index.html">Home</a>
-  <a href="about.html">About</a>
-  <a href="help.html">Help</a>
-</div>
+<body>
+  <div class="container">
 
-<div class="menu-backdrop-nav" id="navBackdrop"></div>
+    <div class="navbar">
+      <div class="nav-left">
+        <div class="logo">💬</div>
+        <h2 class="brand">
+          <span class="chatter">Chatter</span><span class="x">X</span>
+        </h2>
+      </div>
 
-<div class="menu-toggle" id="menuToggle">☰</div>
+      <div class="nav-right" id="navMenu">
+        <button class="close-menu" id="closeMenu">×</button>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="help.html">Help</a>
+      </div>
 
-      <!-- Welcome Screen -->
-      <div id="welcomeScreen" class="screen active-screen">
-        <div class="app-header welcome-header">
-          <div>
-            <h1>ChatterX</h1>
-            <p class="subheading">Talk instantly with strangers</p>
-          </div>
-        </div>
+      <div class="menu-backdrop-nav" id="navBackdrop"></div>
+      <div class="menu-toggle" id="menuToggle">☰</div>
+    </div>
 
-        <div class="welcome-card">
-          <h2 class="welcome-title">Start a new anonymous chat</h2>
-          <p class="welcome-text">
-            Add interests if you want better matching, or start directly.
-          </p>
-
-          <div class="interest-box">
-            <div class="interest-container">
-              <div id="interestTags"></div>
-              <input
-                type="text"
-                id="interestInput"
-                placeholder="Type interest and press Enter"
-              />
-            </div>
-
-            <button id="startBtn">Start Chat</button>
-          </div>
+    <div id="welcomeScreen" class="screen active-screen">
+      <div class="app-header welcome-header">
+        <div>
+          <h1>ChatterX</h1>
+          <p class="subheading">Talk instantly with strangers</p>
         </div>
       </div>
 
-      <!-- Chat Screen -->
-      <div id="chatScreen" class="screen hidden">
-        <div class="app-header chat-header">
-          <div>
-            <h1>ChatterX</h1>
-            <p class="subheading">Talk instantly with strangers</p>
-          </div>
-        </div>
-        <div class="floating-controls">
-          <button id="backBtn" class="back-btn">←</button>
+      <div class="welcome-card">
+        <h2 class="welcome-title">Start a new anonymous chat</h2>
+        <p class="welcome-text">
+          Add interests if you want better matching, or start directly.
+        </p>
 
-          <div class="theme-toggle chat-theme-toggle">
-            <input type="checkbox" id="themeSwitch" />
-            <label for="themeSwitch" class="toggle">
-              <span class="icon sun">☀️</span>
-              <span class="icon moon">🌙</span>
-              <span class="ball"></span>
-            </label>
-          </div>
-        </div>
-
-        <div class="status-row">
-          <span id="statusDot" class="status-dot disconnected"></span>
-          <span id="status">Not connected</span>
-        </div>
-        <div id="onlineUsers" class="online-users">Users online: 0</div>
-
-        <div id="chatBox">
-          <div id="chatPlaceholder" class="chat-placeholder">
-            Start a chat to see messages here
-          </div>
-        </div>
-
-        <div id="typingIndicator" class="typing-indicator hidden">
-          <span>Typing</span>
-          <div class="typing-dots">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-        </div>
-
-        <div id="filePreview" class="file-preview hidden"></div>
-
-        <div class="input-area">
-          <div id="menuBackdrop" class="menu-backdrop hidden"></div>
-
-          <div class="input-box">
-            <button id="plusBtn" class="plus-btn">+</button>
+        <div class="interest-box">
+          <div class="interest-container">
+            <div id="interestTags"></div>
             <input
               type="text"
-              id="messageInput"
-              placeholder="Type message..."
+              id="interestInput"
+              placeholder="Type interest and press Enter"
             />
-            <button id="sendBtn">Send</button>
-            <button id="nextBtn">Next</button>
           </div>
 
-          <div id="actionMenu" class="action-menu hidden">
-            <button id="photoOption" class="action-item disabled-action">
-              Upload Photo
-            </button>
-            <button id="videoOption" class="action-item disabled-action">
-              Upload Video
-            </button>
-            <button id="reportOption" class="action-item danger-action">
-              Report User
-            </button>
-          </div>
+          <button id="startBtn">Start Chat</button>
         </div>
-
-        <input
-          type="file"
-          id="fileInput"
-          accept="image/*,video/mp4,video/webm,video/quicktime"
-          hidden
-        />
       </div>
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="script.js"></script>
-  </body>
+    <div id="chatScreen" class="screen hidden">
+      <div class="app-header chat-header">
+        <div>
+          <h1>ChatterX</h1>
+          <p class="subheading">Talk instantly with strangers</p>
+        </div>
+      </div>
+
+      <div class="floating-controls">
+        <button id="backBtn" class="back-btn">←</button>
+
+        <div class="theme-toggle chat-theme-toggle">
+          <input type="checkbox" id="themeSwitch" />
+          <label for="themeSwitch" class="toggle">
+            <span class="icon sun">☀️</span>
+            <span class="icon moon">🌙</span>
+            <span class="ball"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="status-row">
+        <span id="statusDot" class="status-dot disconnected"></span>
+        <span id="status">Not connected</span>
+      </div>
+
+      <div id="onlineUsers" class="online-users">Users online: 0</div>
+
+      <div id="chatBox">
+        <div id="chatPlaceholder" class="chat-placeholder">
+          Start a chat to see messages here
+        </div>
+      </div>
+
+      <div id="typingIndicator" class="typing-indicator hidden">
+        <span>Typing</span>
+        <div class="typing-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+
+      <div id="filePreview" class="file-preview hidden"></div>
+
+      <div class="input-area">
+        <div id="menuBackdrop" class="menu-backdrop hidden"></div>
+
+        <div class="input-box">
+          <button id="plusBtn" class="plus-btn">+</button>
+          <input type="text" id="messageInput" placeholder="Type message..." />
+          <button id="sendBtn">Send</button>
+          <button id="nextBtn">Next</button>
+        </div>
+
+        <div id="actionMenu" class="action-menu hidden">
+          <button id="photoOption" class="action-item disabled-action">
+            Upload Photo
+          </button>
+          <button id="videoOption" class="action-item disabled-action">
+            Upload Video
+          </button>
+          <button id="reportOption" class="action-item danger-action">
+            Report User
+          </button>
+        </div>
+      </div>
+
+      <input
+        type="file"
+        id="fileInput"
+        accept="image/*,video/mp4,video/webm,video/quicktime"
+        hidden
+      />
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
+</body>
 </html>
