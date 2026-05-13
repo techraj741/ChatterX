@@ -1,6 +1,6 @@
-# 🚀 ChatterX – Real-Time Anonymous Chat App
+# 🚀 ChatterX – Real-Time Anonymous Chat Application
 
-ChatterX is a real-time anonymous chat application where users can connect with strangers based on shared interests. It enables instant messaging, media sharing, and smooth user matching using WebSockets.
+ChatterX is a real-time anonymous chat platform where users can instantly connect with strangers for one-to-one conversations. The application supports interest-based matching, real-time messaging, media sharing, responsive design, and modern UI interactions using WebSockets.
 
 ---
 
@@ -10,94 +10,114 @@ ChatterX is a real-time anonymous chat application where users can connect with 
 
 ---
 
+## 📸 Preview
+
+### 🌙 Chat Interface (Dark Mode)
+
+![Chat Dark Theme](assets/screenshots/chat-dark-theme.png)
+
+---
+
 ## 📌 Features
 
-* 🔗 **Anonymous One-to-One Chat**
-* 🎯 **Interest-Based Matching**
-* ⚡ **Real-Time Messaging (Socket.IO)**
-* ⌨️ **Typing Indicator**
-* 🔄 **Next Stranger (with confirmation flow)**
-* 🖼️ **Media Sharing (Image & Video)**
-* 🌙 **Dark / Light Theme Toggle**
-* 🚨 **User Reporting System**
-* 📊 **Online Users Counter**
+* 🔗 Anonymous One-to-One Chat
+* 🎯 Interest-Based Stranger Matching
+* ⚡ Real-Time Messaging using Socket.IO
+* ⌨️ Live Typing Indicator
+* 🔄 Next Stranger Flow with Confirmation
+* 🖼️ Image & Video Sharing
+* 🌙 Dark / Light Theme Toggle
+* 🚨 User Reporting System
+* 📊 Online Users Counter
+* 📱 Responsive Design for Desktop & Mobile
+* 📄 About and Help Pages
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-
 * HTML5
-* CSS3 (Glassmorphism UI)
-* JavaScript (Vanilla JS)
+* CSS3
+* Vanilla JavaScript
 
 ### Backend
-
 * Node.js
 * Express.js
 * Socket.IO
 
 ### File Handling
+* Multer
 
-* Multer (for media upload)
+### Deployment & Tools
+* Render
+* GitHub
 
 ---
 
 ## 🧠 How It Works
 
-1. User enters an interest and starts chat
-2. Backend stores user in a waiting queue
-3. Matching algorithm finds another user with similar interest
-4. Both users are connected in a private room
-5. Messages are exchanged in real-time via Socket.IO
-6. User can skip to next stranger anytime
+1. User optionally enters interests
+2. User joins the waiting queue
+3. ChatterX searches for another compatible stranger
+4. If matching interests are found, priority matching is used
+5. Both users join a private Socket.IO room
+6. Messages and media are exchanged in real-time
+7. Users can leave or switch chats anytime
 
 ---
 
 ## 📁 Project Structure
 
-```
+```txt
 ChatterX/
 │
-├── server.js          # Backend logic (Express + Socket.IO)
-├── package.json       # Dependencies
+├── server.js
+├── package.json
+├── package-lock.json
 │
 ├── public/
-│   ├── index.html     # UI structure
-│   ├── style.css      # Styling
-│   └── script.js      # Frontend logic
+│   ├── index.html
+│   ├── about.html
+│   ├── help.html
+│   ├── style.css
+│   └── script.js
 │
-├── uploads/           # Uploaded media files
-├── reports/           # User reports (JSON)
+├── reports/
+│   └── reports.json
+│
+├── assets/
+│   └── screenshots/
+│
+└── README.md
 ```
 
 ---
 
 ## ⚙️ Installation & Setup
 
-1. Clone the repository
+### 1️⃣ Clone the repository
 
 ```bash
 git clone https://github.com/techraj741/ChatterX.git
 cd ChatterX
 ```
 
-2. Install dependencies
+### 2️⃣ Install dependencies
 
 ```bash
 npm install
 ```
 
-3. Run the server
+### 3️⃣ Start the server
 
 ```bash
 npm start
 ```
 
-4. Open in browser
+### 4️⃣ Open in browser
 
-```
+```txt
 http://localhost:3000
 ```
 
@@ -105,59 +125,98 @@ http://localhost:3000
 
 ## 📸 Screenshots
 
-### 🏠 Home Screen
-![Home Screen](screenshots/home.png)
+### 🏠 Welcome Screen
 
-### ⏳ Waiting / Matching Screen
-![Waiting Screen](screenshots/waiting.png)
-
-### 🌙 Chat Screen - Dark Mode
-![Chat Dark Mode](screenshots/chat-dark.png)
-
-### ☀️ Chat Screen - Light Mode
-![Chat Light Mode](screenshots/chat-light.png)
+![Welcome Screen](assets/screenshots/welcome-screen.png)
 
 ---
 
-## 🚧 Limitations
+### ⏳ Searching / Waiting Screen
 
-* No database (data stored locally)
-* Chats are not saved (no history)
+![Searching State](assets/screenshots/searching-state.png)
+
+---
+
+### 🌙 Chat Screen – Dark Theme
+
+![Chat Dark Theme](assets/screenshots/chat-dark-theme.png)
+
+---
+
+### ☀️ Chat Screen – Light Theme
+
+![Chat Light Theme](assets/screenshots/chat-light-theme.png)
+
+---
+
+### 📄 About Page
+
+![About Page](assets/screenshots/about-page.png)
+
+---
+
+### 🛟 Help Center
+
+![Help Page](assets/screenshots/help-page.png)
+
+---
+
+### 📱 Mobile Navigation
+
+![Mobile Menu](assets/screenshots/mobile-menu.jpeg)
+
+---
+
+### 📱 Mobile Chat Screen
+
+![Mobile Chat](assets/screenshots/mobile-chat-screen.jpeg)
+
+---
+
+## 🚧 Current Limitations
+
+* No database integration
+* Chat history is not stored
 * No authentication system
-* Basic report system
+* Basic moderation/report handling
+* Media files are stored locally
 
 ---
 
 ## 🔮 Future Improvements
 
-* Add database (MongoDB)
-* User authentication
+* MongoDB database integration
+* Optional user authentication
 * Chat history storage
-* AI moderation / abuse detection
-* React-based frontend
-* Mobile responsiveness improvements
+* WebRTC audio/video calling
+* AI moderation and abuse detection
+* Redis-based scalable queue system
+* React frontend migration
 
 ---
 
-## 🎓 Project Purpose
+## 🎓 Academic Purpose
 
-This project is developed as part of academic submission to demonstrate:
+This project was developed as a major academic project to demonstrate:
 
 * Real-time communication using WebSockets
 * Backend development with Node.js & Express
-* File handling and media upload
-* Frontend + backend integration
+* Frontend and backend integration
+* Real-time user matching systems
+* Media upload and handling
+* Responsive UI/UX implementation
 
 ---
 
 ## 👨‍💻 Author
 
-**Raj Burman**
-📧 [burmanraj494@gmail.com](mailto:burmanraj494@gmail.com)
+### Raj Burman
+
+📧 burmanraj494@gmail.com  
 🔗 GitHub: https://github.com/techraj741
 
 ---
 
-## ⭐ If you like this project
+## ⭐ Support
 
-Give it a ⭐ on GitHub and share feedback!
+If you like this project, give it a ⭐ on GitHub.
