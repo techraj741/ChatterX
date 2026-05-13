@@ -1,3 +1,7 @@
+/* =========================================================
+   SERVER SETUP
+========================================================= */
+
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -8,6 +12,10 @@ const fs = require("fs");
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
+
+/* =========================================================
+   CONFIG
+========================================================= */
 
 const PORT = process.env.PORT || 3000;
 const UPLOAD_DIR = "uploads";
@@ -24,11 +32,19 @@ ensureDirectory(REPORT_DIR);
 
 app.use("/uploads", express.static(UPLOAD_DIR));
 
+/* =========================================================
+   FILE SYSTEM HELPERS
+========================================================= */
+
 function ensureDirectory(dir) {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
   }
 }
+
+/* =========================================================
+   FILE UPLOAD SETUP
+========================================================= */
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -64,6 +80,10 @@ const upload = multer({
     }
   }
 });
+
+/* =========================================================
+   MATCHING HELPERS
+========================================================= */
 
 function formatInterestList(interests) {
   if (!Array.isArray(interests) || interests.length === 0) return "";
@@ -144,6 +164,10 @@ function connectUsers(userA, userB) {
   io.to(room).emit("chat start", message);
 }
 
+/* =========================================================
+   CHAT SESSION HELPERS
+========================================================= */
+
 function leaveCurrentRoom(socket, leaveMessage, reason = "disconnected") {
   if (!socket.room) return;
 
@@ -167,6 +191,10 @@ function removeFromQueue(socketId) {
   waitingUsers = waitingUsers.filter((user) => user.id !== socketId);
 }
 
+/* =========================================================
+   REPORT HANDLING
+========================================================= */
+
 function saveReport(data) {
   let reports = [];
 
@@ -183,6 +211,10 @@ function saveReport(data) {
 
   fs.writeFileSync(REPORT_FILE, JSON.stringify(reports, null, 2));
 }
+
+/* =========================================================
+   SOCKET EVENTS
+========================================================= */
 
 io.on("connection", (socket) => {
   onlineUsers++;
@@ -253,6 +285,10 @@ io.on("connection", (socket) => {
   });
 });
 
+/* =========================================================
+   UPLOAD ROUTE
+========================================================= */
+
 app.post("/upload", (req, res) => {
   upload.single("file")(req, res, (err) => {
     if (err) {
@@ -271,6 +307,10 @@ app.post("/upload", (req, res) => {
     });
   });
 });
+
+/* =========================================================
+   START SERVER
+========================================================= */
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

@@ -1,3 +1,7 @@
+/* =========================================================
+   MOBILE NAVIGATION
+========================================================= */
+
 const menuToggle = document.getElementById("menuToggle");
 const closeMenu = document.getElementById("closeMenu");
 const navMenu = document.getElementById("navMenu");
@@ -17,10 +21,18 @@ menuToggle?.addEventListener("click", openNavMenu);
 closeMenu?.addEventListener("click", closeNavMenu);
 navBackdrop?.addEventListener("click", closeNavMenu);
 
+/* =========================================================
+   CHAT PAGE CHECK
+========================================================= */
+
 const isChatPage = typeof io !== "undefined" && document.getElementById("chatScreen");
 
 if (isChatPage) {
   const socket = io();
+
+  /* =========================================================
+     DOM ELEMENTS
+  ========================================================= */
 
   const interestInput = document.getElementById("interestInput");
   const interestTags = document.getElementById("interestTags");
@@ -47,6 +59,10 @@ if (isChatPage) {
   const videoOption = document.getElementById("videoOption");
   const reportOption = document.getElementById("reportOption");
 
+  /* =========================================================
+     CHAT STATE
+  ========================================================= */
+
   let interests = [];
   let confirmMode = false;
   let isConnected = false;
@@ -57,6 +73,10 @@ if (isChatPage) {
   let strangerTypingTimeout;
   let typingThrottle;
   let mediaUnlockTimer;
+
+  /* =========================================================
+     UI HELPERS
+  ========================================================= */
 
   function togglePlaceholder() {
     const hasMessages = chatBox.querySelectorAll(".message, .system-message").length > 0;
@@ -101,6 +121,10 @@ if (isChatPage) {
     return `${hours}:${minutes} ${ampm}`;
   }
 
+  /* =========================================================
+     ACTION MENU
+  ========================================================= */
+
   function openActionMenu() {
     actionMenu.classList.remove("hidden");
     menuBackdrop.classList.remove("hidden");
@@ -126,27 +150,13 @@ if (isChatPage) {
     }, 280);
   }
 
+  /* =========================================================
+     MEDIA ACCESS
+  ========================================================= */
+
   function updateMediaAccessUI() {
     photoOption.classList.toggle("disabled-action", !mediaUnlocked);
     videoOption.classList.toggle("disabled-action", !mediaUnlocked);
-  }
-
-  function updateNextButtonState() {
-    if (isSearching) {
-      nextBtn.disabled = true;
-      nextBtn.innerText = "Next";
-      confirmMode = false;
-      return;
-    }
-
-    if (isConnected || chatEnded) {
-      nextBtn.disabled = false;
-      return;
-    }
-
-    nextBtn.disabled = true;
-    nextBtn.innerText = "Next";
-    confirmMode = false;
   }
 
   function startMediaUnlockTimer() {
@@ -165,6 +175,90 @@ if (isChatPage) {
     fileInput.value = "";
     filePreview.innerHTML = "";
     filePreview.classList.add("hidden");
+  }
+
+  function validateVideoDuration(file) {
+    return new Promise((resolve) => {
+      if (!file.type.startsWith("video/")) {
+        resolve(true);
+        return;
+      }
+
+      const video = document.createElement("video");
+
+      video.preload = "metadata";
+
+      video.onloadedmetadata = () => {
+        URL.revokeObjectURL(video.src);
+        resolve(video.duration <= 60);
+      };
+
+      video.src = URL.createObjectURL(file);
+    });
+  }
+
+  async function uploadSelectedFile() {
+    if (!isConnected || !mediaUnlocked) return;
+
+    const file = fileInput.files[0];
+
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert("File size must be 10 MB or less.");
+      resetFilePreview();
+      return;
+    }
+
+    if (!(await validateVideoDuration(file))) {
+      alert("Video must be 60 seconds or less.");
+      resetFilePreview();
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/upload", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Upload failed");
+      }
+
+      addMedia("you", data.url, data.type);
+      socket.emit("message", data);
+      resetFilePreview();
+    } catch (error) {
+      alert(error.message || "Upload failed");
+    }
+  }
+
+  /* =========================================================
+     CHAT RESET HELPERS
+  ========================================================= */
+
+  function updateNextButtonState() {
+    if (isSearching) {
+      nextBtn.disabled = true;
+      nextBtn.innerText = "Next";
+      confirmMode = false;
+      return;
+    }
+
+    if (isConnected || chatEnded) {
+      nextBtn.disabled = false;
+      return;
+    }
+
+    nextBtn.disabled = true;
+    nextBtn.innerText = "Next";
+    confirmMode = false;
   }
 
   function clearChatBox() {
@@ -188,6 +282,10 @@ if (isChatPage) {
     startBtn.disabled = false;
     updateNextButtonState();
   }
+
+  /* =========================================================
+     MESSAGE RENDERING
+  ========================================================= */
 
   function createMessageWrapper(sender) {
     const div = document.createElement("div");
@@ -260,6 +358,10 @@ if (isChatPage) {
     togglePlaceholder();
   }
 
+  /* =========================================================
+     INTEREST TAGS
+  ========================================================= */
+
   function createTag(text) {
     const tag = document.createElement("div");
 
@@ -274,67 +376,9 @@ if (isChatPage) {
     interestTags.appendChild(tag);
   }
 
-  function validateVideoDuration(file) {
-    return new Promise((resolve) => {
-      if (!file.type.startsWith("video/")) {
-        resolve(true);
-        return;
-      }
-
-      const video = document.createElement("video");
-
-      video.preload = "metadata";
-
-      video.onloadedmetadata = () => {
-        URL.revokeObjectURL(video.src);
-        resolve(video.duration <= 60);
-      };
-
-      video.src = URL.createObjectURL(file);
-    });
-  }
-
-  async function uploadSelectedFile() {
-    if (!isConnected || !mediaUnlocked) return;
-
-    const file = fileInput.files[0];
-
-    if (!file) return;
-
-    if (file.size > 10 * 1024 * 1024) {
-      alert("File size must be 10 MB or less.");
-      resetFilePreview();
-      return;
-    }
-
-    if (!(await validateVideoDuration(file))) {
-      alert("Video must be 60 seconds or less.");
-      resetFilePreview();
-      return;
-    }
-
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const res = await fetch("/upload", {
-        method: "POST",
-        body: formData
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Upload failed");
-      }
-
-      addMedia("you", data.url, data.type);
-      socket.emit("message", data);
-      resetFilePreview();
-    } catch (error) {
-      alert(error.message || "Upload failed");
-    }
-  }
+  /* =========================================================
+     USER ACTIONS
+  ========================================================= */
 
   startBtn.onclick = () => {
     if (isSearching || isConnected) return;
@@ -572,6 +616,10 @@ if (isChatPage) {
     await uploadSelectedFile();
   });
 
+  /* =========================================================
+     SOCKET EVENTS
+  ========================================================= */
+
   socket.on("message", (msg) => {
     typingIndicator.classList.add("hidden");
 
@@ -660,6 +708,10 @@ if (isChatPage) {
     onlineUsersText.innerText = `Users online: ${count}`;
   });
 
+  /* =========================================================
+     THEME HANDLING
+  ========================================================= */
+
   const savedTheme = localStorage.getItem("theme");
 
   if (savedTheme === "dark") {
@@ -679,6 +731,10 @@ if (isChatPage) {
       document.body.classList.contains("light") ? "light" : "dark"
     );
   });
+
+  /* =========================================================
+     INITIAL SETUP
+  ========================================================= */
 
   updateMediaAccessUI();
   togglePlaceholder();
