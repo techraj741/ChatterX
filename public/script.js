@@ -657,9 +657,17 @@ async function uploadSelectedFile() {
    THEME
 ========================================================= */
 const savedTheme = localStorage.getItem("theme");
-if (savedTheme === "light") {
+
+if (savedTheme === null) {
     document.body.classList.add("light");
     themeSwitch.checked = true;
+    localStorage.setItem("theme", "light");
+} else if (savedTheme === "light") {
+    document.body.classList.add("light");
+    themeSwitch.checked = true;
+} else {
+    document.body.classList.remove("light");
+    themeSwitch.checked = false;
 }
 
 themeSwitch.addEventListener("change", () => {
