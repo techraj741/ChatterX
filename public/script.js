@@ -344,6 +344,7 @@ nextBtn.onclick = () => {
 
     socket.emit("next");
     status.innerText = "Searching for new stranger...";
+    setStatusState("searching");
 };
 
 plusBtn.onclick = () => {
@@ -362,7 +363,7 @@ backBtn.onclick = () => {
 
     // 🔥 Agar connected ya searching hai to properly leave
     if (isConnected || isSearching) {
-        socket.emit("next"); // current chat/queue se nikal jao
+        socket.emit("leave-chat"); // current chat/queue se nikal jao
     }
 
     // Reset everything
@@ -420,16 +421,27 @@ reportOption.onclick = () => {
     resetReportConfirmState();
 
     socket.emit("report-user");
-    socket.emit("next");
 
-    addSystemMessage("You reported this user.");
-
-    resetChatSessionState();
+    typingIndicator.classList.add("hidden");
     resetFilePreview();
 
-    chatBox.querySelectorAll(".message").forEach((m) => m.remove());
-    status.innerText = "Searching for new stranger...";
+    chatBox.querySelectorAll(".message, .system-message").forEach((m) => m.remove());
     togglePlaceholder();
+
+    isConnected = false;
+    chatEnded = false;
+    isSearching = true;
+    mediaUnlocked = false;
+
+    clearTimeout(mediaUnlockTimer);
+    updateMediaAccessUI();
+    closeActionMenu();
+
+    status.innerText = "User reported. Searching for new stranger...";
+    setStatusState("searching");
+    updateNextButtonState();
+
+    socket.emit("next");
 };
 
 /* =========================================================
