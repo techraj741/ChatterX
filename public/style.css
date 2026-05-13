@@ -1264,11 +1264,12 @@ body.about-body .nav-right a:hover {
 
   .menu-footer {
   margin-top: auto;
-  padding: 18px 14px;
+  padding-top: 20px;
   text-align: center;
-  color: #0f172a;
+  color: #475569;
   font-size: 14px;
-  }
+  font-weight: 500;
+}
 
   .screen {
     padding: 14px 14px;
